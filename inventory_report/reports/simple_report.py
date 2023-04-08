@@ -4,20 +4,17 @@ from typing import List
 
 class SimpleReport:
     @classmethod
-    def get_company_with_most_products(cls, reports: List[dict]) -> str:
-        company_counts = {}
+    def get_products_by_company(cls, reports: List[dict]) -> str:
+        products_by_company = {}
 
         for report in reports:
             company_name = report["nome_da_empresa"]
-            if company_name in company_counts:
-                company_counts[company_name] += 1
+            if company_name in products_by_company:
+                products_by_company[company_name] += 1
             else:
-                company_counts[company_name] = 1
+                products_by_company[company_name] = 1
 
-        company_with_most_products = max(
-            company_counts, key=company_counts.get
-        )
-        return company_with_most_products
+        return products_by_company
 
     @classmethod
     def get_oldest_manufacturing_date(cls, reports: List[dict]) -> str:
@@ -52,17 +49,18 @@ class SimpleReport:
 
     @classmethod
     def generate(cls, reports: List[dict]) -> str:
-        company_with_most_products = cls.get_company_with_most_products(
-            reports
-        )
-
+        products_by_company = cls.get_products_by_company(reports)
         oldest_manufacturing_date = cls.get_oldest_manufacturing_date(reports)
         closest_expiration_date = cls.get_closest_expiration_date(reports)
 
+        company_with_most_products = max(
+            products_by_company, key=products_by_company.get
+        )
+
         report = (
             f"Data de fabricação mais antiga: {oldest_manufacturing_date}\n"
+            f"Data de validade mais próxima: {closest_expiration_date}\n"
+            f"Empresa com mais produtos: {company_with_most_products}"
         )
-        report += f"Data de validade mais próxima: {closest_expiration_date}\n"
-        report += f"Empresa com mais produtos: {company_with_most_products}"
 
         return report
