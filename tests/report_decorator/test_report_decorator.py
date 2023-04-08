@@ -1,9 +1,11 @@
+from pytest import fixture
 from inventory_report.reports.colored_report import ColoredReport
 from inventory_report.reports.simple_report import SimpleReport
 
 
-def test_decorar_relatorio():
-    products = [
+@fixture
+def products():
+    return [
         {
             "id": 1,
             "nome_da_empresa": "ChocoBoom",
@@ -15,22 +17,18 @@ def test_decorar_relatorio():
         },
     ]
 
+
+def test_decorar_relatorio(products):
+
     colored_report = ColoredReport(SimpleReport).generate(products)
 
-    green = "\033[32m"
-    red = "\033[31m"
-    blue = "\033[36m"
-    reset = "\033[0m"
-
-    fabrication_text = "Data de fabricação mais antiga: "
-    expiration_text = "Data de validade mais próxima: "
-    company_text = "Empresa com mais produtos: "
-    fabrication_date = "2023-04-08"
-    expiration_date = "2023-12-08"
-    company_name = "ChocoBoom"
-
-    assert colored_report == (
-        f"{green}{fabrication_text}{reset}{blue}{fabrication_date}{reset}\n"
-        f"{green}{expiration_text}{reset}{blue}{expiration_date}{reset}\n"
-        f"{green}{company_text}{reset}{red}{company_name}{reset}"
+    expected_report = (
+        "\033[32mData de fabricação mais antiga:\033[0m "
+        "\033[36m2023-04-08\033[0m\n"
+        "\033[32mData de validade mais próxima:\033[0m "
+        "\033[36m2023-12-08\033[0m\n"
+        "\033[32mEmpresa com mais produtos:\033[0m "
+        "\033[31mChocoBoom\033[0m"
     )
+
+    assert colored_report == expected_report
